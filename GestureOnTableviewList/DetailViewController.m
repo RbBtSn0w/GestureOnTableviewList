@@ -10,6 +10,7 @@
 
 @interface DetailViewController ()
 - (void)configureView;
+- (void)handleSwipeFrom:(UISwipeGestureRecognizer *)gestureRecognizer;
 @end
 
 @implementation DetailViewController
@@ -48,6 +49,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     [self configureView];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -61,8 +63,32 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         self.title = NSLocalizedString(@"Detail", @"Detail");
+        UISwipeGestureRecognizer *gestureRecognizerDirectionRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeFrom:)];
+        [gestureRecognizerDirectionRight setDirection:UISwipeGestureRecognizerDirectionRight];
+        [self.view addGestureRecognizer:gestureRecognizerDirectionRight];
+        [gestureRecognizerDirectionRight release];
+        
+        UISwipeGestureRecognizer *gestureRecognizerDirectionLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeFrom:)];
+        [gestureRecognizerDirectionLeft setDirection:UISwipeGestureRecognizerDirectionLeft];
+        [self.view addGestureRecognizer:gestureRecognizerDirectionLeft];
+        [gestureRecognizerDirectionLeft release];
+
     }
     return self;
 }
+
+
+- (void)handleSwipeFrom:(UISwipeGestureRecognizer *)gestureRecognizer {
+   // NSLog(@"should began gesture %@", gestureRecognizer);
+    if (gestureRecognizer.direction == UISwipeGestureRecognizerDirectionLeft) {
+        //[self moveLeftColumnButtonPressed:nil];
+        NSLog(@"Move Left");
+    }
+    else if (gestureRecognizer.direction == UISwipeGestureRecognizerDirectionRight) {
+        //[self moveRightColumnButtonPressed:nil];
+        NSLog(@"Move Right");
+    }
+}
+
 							
 @end
