@@ -148,6 +148,7 @@
         self.detailViewController.currentIndex = indexPath.row;
     }
     
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 
