@@ -8,10 +8,24 @@
 
 #import <UIKit/UIKit.h>
 
-@interface DetailViewController : UIViewController<UISplitViewControllerDelegate>
+@protocol DetailViewControllerPageDelegate;
+@interface DetailViewController : UIViewController<UISplitViewControllerDelegate>{
+    id<DetailViewControllerPageDelegate> _pageDelegate;
+}
 
 @property (strong, nonatomic) id detailItem;
 
 @property (strong, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
+
+@property (nonatomic , assign) id<DetailViewControllerPageDelegate> pageDelegate;
+
+@end
+
+
+
+@protocol DetailViewControllerPageDelegate <NSObject>
+
+- (BOOL)detailViewControllerWithNextPage:(DetailViewController*)detailViewController;
+- (BOOL)detailViewControllerWithPreviousPage:(DetailViewController*)detailViewController;
 
 @end
