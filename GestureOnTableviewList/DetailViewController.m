@@ -9,6 +9,7 @@
 #import "DetailViewController.h"
 
 @interface DetailViewController ()
+@property (strong, nonatomic) UIPopoverController *masterPopoverController;
 - (void)configureView;
 - (void)handleSwipeFrom:(UISwipeGestureRecognizer *)gestureRecognizer;
 @end
@@ -19,6 +20,7 @@
 {
     [_detailItem release];
     [_detailDescriptionLabel release];
+    [_masterPopoverController release];
     [super dealloc];
 }
 
@@ -32,6 +34,9 @@
 
         // Update the view.
         [self configureView];
+    }
+    if (self.masterPopoverController != nil) {
+        [self.masterPopoverController dismissPopoverAnimated:YES];
     }
 }
 
@@ -78,6 +83,17 @@
 }
 
 
+#pragma mark    -
+#pragma mark    Split View
+-(void)splitViewController:(UISplitViewController *)svc willHideViewController:(UIViewController *)aViewController withBarButtonItem:(UIBarButtonItem *)barButtonItem forPopoverController:(UIPopoverController *)pc{
+    barButtonItem.title = NSLocalizedString(@"Master", @"Master");
+    [self.navigationItem setLeftBarButtonItem:barButtonItem animated:YES];
+    self.masterPopoverController = pc;
+}
+-(void)splitViewController:(UISplitViewController *)svc willShowViewController:(UIViewController *)aViewController invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem{
+    [self.navigationItem setLeftBarButtonItem:nil animated:YES];
+    self.masterPopoverController = nil;
+}
 - (void)handleSwipeFrom:(UISwipeGestureRecognizer *)gestureRecognizer {
    // NSLog(@"should began gesture %@", gestureRecognizer);
     if (gestureRecognizer.direction == UISwipeGestureRecognizerDirectionLeft) {
