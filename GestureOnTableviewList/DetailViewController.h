@@ -11,6 +11,7 @@
 @protocol DetailViewControllerPageDelegate;
 @interface DetailViewController : UIViewController<UISplitViewControllerDelegate>{
     id<DetailViewControllerPageDelegate> _pageDelegate;
+    NSInteger currentIndex;
 }
 
 @property (strong, nonatomic) id detailItem;
@@ -19,13 +20,15 @@
 
 @property (nonatomic , assign) id<DetailViewControllerPageDelegate> pageDelegate;
 
+@property (nonatomic)   NSInteger currentIndex;
+
 @end
 
 
 
 @protocol DetailViewControllerPageDelegate <NSObject>
 
-- (BOOL)detailViewControllerWithNextPage:(DetailViewController*)detailViewController;
-- (BOOL)detailViewControllerWithPreviousPage:(DetailViewController*)detailViewController;
+- (BOOL)detailViewControllerWithNextPage:(DetailViewController*)detailViewController withCurrentIndex:(NSInteger)currentIndex;
+- (BOOL)detailViewControllerWithPreviousPage:(DetailViewController*)detailViewController withCurrentIndex:(NSInteger)currentIndex;
 
 @end

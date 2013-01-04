@@ -131,7 +131,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
+    
     NSDate *object = _objects[indexPath.row];
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         if (!self.detailViewController) {
@@ -140,10 +140,12 @@
         }
         self.detailViewController.detailItem = object;
         self.detailViewController.title =  [NSString stringWithFormat:@"%d   Detail",indexPath.row];
+        self.detailViewController.currentIndex = indexPath.row;
         [self.navigationController pushViewController:self.detailViewController animated:YES];
     }else{
         self.detailViewController.detailItem = object;
         self.detailViewController.title =  [NSString stringWithFormat:@"%d   Detail",indexPath.row];
+        self.detailViewController.currentIndex = indexPath.row;
     }
     
 }
@@ -158,17 +160,41 @@
 /**
  *   Reload table view result and find current page to previous page
  **/
--(BOOL)detailViewControllerWithPreviousPage:(DetailViewController *)detailViewController{
+-(BOOL)detailViewControllerWithPreviousPage:(DetailViewController *)detailViewController withCurrentIndex:(NSInteger)currentIndex{
     
-    return NO;
+    NSInteger previousIndex = currentIndex-1;
+    NSInteger mixIndex = 0;
+    NSInteger maxIndex = _objects.count-1;
+    
+    if ( mixIndex <= previousIndex && previousIndex <= maxIndex) {
+        NSData *object = _objects[previousIndex];
+        self.detailViewController.detailItem = object;
+        self.detailViewController.title =  [NSString stringWithFormat:@"%d   Detail",previousIndex];
+        self.detailViewController.currentIndex = previousIndex;
+        return YES;
+    }else{
+        return NO;
+    }
 }
 
 /**
  *   Reload table view result and find current page to last page
  **/
--(BOOL)detailViewControllerWithNextPage:(DetailViewController *)detailViewController{
+-(BOOL)detailViewControllerWithNextPage:(DetailViewController *)detailViewController withCurrentIndex:(NSInteger)currentIndex{
     
-    return NO;
+    NSInteger lastIndex = currentIndex+1;
+    NSInteger mixIndex = 0;
+    NSInteger maxIndex = _objects.count-1;
+
+    if (mixIndex<= lastIndex && lastIndex <=maxIndex) {
+        NSData *object = _objects[lastIndex];
+        self.detailViewController.detailItem = object;
+        self.detailViewController.title =  [NSString stringWithFormat:@"%d   Detail",lastIndex];
+        self.detailViewController.currentIndex = lastIndex;
+        return YES;
+    }else{
+        return NO;
+    }
 }
 
 

@@ -18,6 +18,8 @@
 
 @synthesize pageDelegate = _pageDelegate;
 
+@synthesize currentIndex;
+
 - (void)dealloc
 {
     [_detailItem release];
@@ -99,29 +101,26 @@
 - (void)handleSwipeFrom:(UISwipeGestureRecognizer *)gestureRecognizer {
    // NSLog(@"should began gesture %@", gestureRecognizer);
     if (gestureRecognizer.direction == UISwipeGestureRecognizerDirectionLeft) {
-        //[self moveLeftColumnButtonPressed:nil];
         NSLog(@"Move Left");
-        if([self.pageDelegate respondsToSelector:@selector(detailViewControllerWithPreviousPage:)]){
-            BOOL state = [self.pageDelegate detailViewControllerWithPreviousPage:self];
-            if (!state) {
-                UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"The page is first page on top" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-                [av show];
-                [av release];
-            }
-        }
-    }
-    else if (gestureRecognizer.direction == UISwipeGestureRecognizerDirectionRight) {
-        //[self moveRightColumnButtonPressed:nil];
-        NSLog(@"Move Right");
-        if ([self.pageDelegate respondsToSelector:@selector(detailViewControllerWithNextPage:)]) {
-            BOOL state = [self.pageDelegate detailViewControllerWithNextPage:self];
+        if ([self.pageDelegate respondsToSelector:@selector(detailViewControllerWithNextPage:withCurrentIndex:)]) {
+            BOOL state = [self.pageDelegate detailViewControllerWithNextPage:self withCurrentIndex:currentIndex];
             if (!state) {
                 UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"The page is first page on bottom" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
                 [av show];
                 [av release];
             }
         }
-
+    }
+    else if (gestureRecognizer.direction == UISwipeGestureRecognizerDirectionRight) {
+        NSLog(@"Move Right");
+        if([self.pageDelegate respondsToSelector:@selector(detailViewControllerWithPreviousPage:withCurrentIndex:)]){
+            BOOL state = [self.pageDelegate detailViewControllerWithPreviousPage:self withCurrentIndex:currentIndex];
+            if (!state) {
+                UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"The page is first page on top" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                [av show];
+                [av release];
+            }
+        }
     }
 }
 
