@@ -161,18 +161,21 @@
 /**
  *   Reload table view result and find current page to previous page
  **/
--(BOOL)detailViewControllerWithPreviousPage:(DetailViewController *)detailViewController withCurrentIndex:(NSInteger)currentIndex{
-    
-    NSInteger previousIndex = currentIndex-1;
-    NSInteger mixIndex = 0;
-    NSInteger maxIndex = _objects.count-1;
-    
-    if ( mixIndex <= previousIndex && previousIndex <= maxIndex) {
-        NSData *object = _objects[previousIndex];
-        self.detailViewController.detailItem = object;
-        self.detailViewController.title =  [NSString stringWithFormat:@"%d   Detail",previousIndex];
-        self.detailViewController.currentIndex = previousIndex;
-        return YES;
+- (BOOL)swGestureRecognizerWithPreviousPage:(id)classObject withCurrentIndex:(NSInteger)currentIndex{
+    if ([classObject isKindOfClass:[DetailViewController class]]) {
+        NSInteger previousIndex = currentIndex-1;
+        NSInteger mixIndex = 0;
+        NSInteger maxIndex = _objects.count-1;
+        
+        if ( mixIndex <= previousIndex && previousIndex <= maxIndex) {
+            NSData *object = _objects[previousIndex];
+            self.detailViewController.detailItem = object;
+            self.detailViewController.title =  [NSString stringWithFormat:@"%d   Detail",previousIndex];
+            self.detailViewController.currentIndex = previousIndex;
+            return YES;
+        }else{
+            return NO;
+        }
     }else{
         return NO;
     }
@@ -181,18 +184,22 @@
 /**
  *   Reload table view result and find current page to last page
  **/
--(BOOL)detailViewControllerWithNextPage:(DetailViewController *)detailViewController withCurrentIndex:(NSInteger)currentIndex{
+- (BOOL)swGestureRecognizerWithNextPage:(id)classObject withCurrentIndex:(NSInteger)currentIndex{
     
-    NSInteger lastIndex = currentIndex+1;
-    NSInteger mixIndex = 0;
-    NSInteger maxIndex = _objects.count-1;
-
-    if (mixIndex<= lastIndex && lastIndex <=maxIndex) {
-        NSData *object = _objects[lastIndex];
-        self.detailViewController.detailItem = object;
-        self.detailViewController.title =  [NSString stringWithFormat:@"%d   Detail",lastIndex];
-        self.detailViewController.currentIndex = lastIndex;
-        return YES;
+    if ([classObject isKindOfClass:[DetailViewController class]]) {
+        NSInteger lastIndex = currentIndex+1;
+        NSInteger mixIndex = 0;
+        NSInteger maxIndex = _objects.count-1;
+        
+        if (mixIndex<= lastIndex && lastIndex <=maxIndex) {
+            NSData *object = _objects[lastIndex];
+            self.detailViewController.detailItem = object;
+            self.detailViewController.title =  [NSString stringWithFormat:@"%d   Detail",lastIndex];
+            self.detailViewController.currentIndex = lastIndex;
+            return YES;
+        }else{
+            return NO;
+        }
     }else{
         return NO;
     }

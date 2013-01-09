@@ -7,10 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SWGestureRecognizerDelegate.h"
 
-@protocol DetailViewControllerPageDelegate;
 @interface DetailViewController : UIViewController<UISplitViewControllerDelegate>{
-    id<DetailViewControllerPageDelegate> _pageDelegate;
+    id<SWGestureRecognizerDelegate> _pageDelegate;
     NSInteger currentIndex;
 }
 
@@ -18,17 +18,8 @@
 
 @property (strong, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
 
-@property (nonatomic , assign) id<DetailViewControllerPageDelegate> pageDelegate;
+@property (nonatomic , assign) id<SWGestureRecognizerDelegate> pageDelegate;
 
 @property (nonatomic)   NSInteger currentIndex;
-
-@end
-
-
-
-@protocol DetailViewControllerPageDelegate <NSObject>
-
-- (BOOL)detailViewControllerWithNextPage:(DetailViewController*)detailViewController withCurrentIndex:(NSInteger)currentIndex;
-- (BOOL)detailViewControllerWithPreviousPage:(DetailViewController*)detailViewController withCurrentIndex:(NSInteger)currentIndex;
 
 @end

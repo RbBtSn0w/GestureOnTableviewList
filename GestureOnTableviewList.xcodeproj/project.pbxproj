@@ -46,6 +46,7 @@
 		803BD81416958CDE00755982 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DetailViewController_iPhone.xib; sourceTree = "<group>"; };
 		803BD86F1696830B00755982 /* MasterViewController_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MasterViewController_iPad.xib; sourceTree = "<group>"; };
 		803BD8711696832100755982 /* DetailViewController_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DetailViewController_iPad.xib; sourceTree = "<group>"; };
+		808CF3C6169AD337000B810B /* SWGestureRecognizerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SWGestureRecognizerDelegate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +97,7 @@
 				803BD80216958CDE00755982 /* AppDelegate.m */,
 				803BD80A16958CDE00755982 /* MasterViewController.h */,
 				803BD80B16958CDE00755982 /* MasterViewController.m */,
+				808CF3C6169AD337000B810B /* SWGestureRecognizerDelegate.h */,
 				803BD80D16958CDE00755982 /* DetailViewController.h */,
 				803BD80E16958CDE00755982 /* DetailViewController.m */,
 				803BD81016958CDE00755982 /* MasterViewController_iPhone.xib */,
@@ -281,7 +283,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GestureOnTableviewList/GestureOnTableviewList-Prefix.pch";
 				INFOPLIST_FILE = "GestureOnTableviewList/GestureOnTableviewList-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -294,7 +296,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GestureOnTableviewList/GestureOnTableviewList-Prefix.pch";
 				INFOPLIST_FILE = "GestureOnTableviewList/GestureOnTableviewList-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;

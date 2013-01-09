@@ -10,7 +10,7 @@
 #import "DetailViewController.h"
 @class DetailViewController;
 
-@interface MasterViewController : UITableViewController<DetailViewControllerPageDelegate>
+@interface MasterViewController : UITableViewController<SWGestureRecognizerDelegate>
 
 @property (strong, nonatomic) DetailViewController *detailViewController;
 
