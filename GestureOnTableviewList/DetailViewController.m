@@ -7,17 +7,27 @@
 //
 
 #import "DetailViewController.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface DetailViewController (){
+    
     UIView *_topView;
     UIView *_bottomView;
+    
     UIView *_referenceView;
+    
     float oldX , oldY;
     BOOL dragging;
     CGRect hiddenReferenceFrame;
     CGRect showReferenceFrame;
     BOOL isPush;
+    
+    BOOL isMoveIn;
+    BOOL isReveal;
+    
 }
+
+
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 @property (strong, nonatomic) UIView *topView;
 @property (strong, nonatomic) UIView *bottomView;
@@ -25,15 +35,14 @@
 - (void)configureView;
 - (void)addGestureRecognizersToView:(UIView*)contentView;
 - (void)handleSwipeFrom:(UISwipeGestureRecognizer *)swipeGestureRecognizer;
-- (void)handlePanContentView:(UIPanGestureRecognizer *)panGestureRecognizer;
+//- (void)handlePanContentView:(UIPanGestureRecognizer *)panGestureRecognizer;
 
 
-- (void)exchangeViewOnHierarchyForPushState;
-- (void)exchangeViewOnHierarchyForPullState;
 
+-(void)animationWillMoveInView:(UIView*)currentWillHiddenView withWillShowView:(UIView*)nextWillShowView;
 
-- (void)pushTopviewToRight:(UIView*)aBottomView withTopView:(UIView*)aTopView;
--(void)pullTopViewToLeft:(UIView*)aBottomView withTopView:(UIView*)aTopView;
+-(void)animationWillMoveOutView:(UIView*)currentWillHiddenView withWillShowView:(UIView*)nextWillShowView;
+
 @end
 
 @implementation DetailViewController
@@ -52,6 +61,7 @@
     [_detailDescriptionLabel release];
     [_masterPopoverController release];
     [super dealloc];
+    
 }
 
 #pragma mark - Managing the detail item
@@ -119,14 +129,20 @@
         }else{
             _detailDescriptionLabel.frame = CGRectMake(20, 493, 728, 18);
         }
-        _topView = [[UIView alloc] initWithFrame:self.view.bounds];
-        _topView.backgroundColor = [UIColor whiteColor];
-        _topView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
-
         
-        _bottomView = [[UIView alloc] initWithFrame:self.view.bounds];
-        _bottomView.backgroundColor = [UIColor brownColor];
-        _bottomView.autoresizesSubviews = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
+        if (self.topView == nil) {
+            _topView = [[UIView alloc] initWithFrame:self.view.bounds];
+            _topView.backgroundColor = [UIColor greenColor];
+            _topView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
+        }
+        
+        if (self.bottomView == nil) {
+            _bottomView = [[UIView alloc] initWithFrame:self.view.bounds];
+            _bottomView.backgroundColor = [UIColor brownColor];
+            _bottomView.autoresizesSubviews = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
+        }
+        
+        
         
         [self addGestureRecognizersToView:self.view];
         
@@ -175,10 +191,12 @@
     
 }
 
+
+//which one view on top , it's top view;
 - (void)handleSwipeFrom:(UISwipeGestureRecognizer *)swipeGestureRecognizer {
    // NSLog(@"should began gesture %@", gestureRecognizer);
     if (swipeGestureRecognizer.direction == UISwipeGestureRecognizerDirectionLeft) {
-        NSLog(@"Move Left");
+        NSLog(@"Move To Left");
         if ([self.pageDelegate respondsToSelector:@selector(swGestureRecognizerWithNextPage:withCurrentIndex:)]) {
             BOOL state = [self.pageDelegate swGestureRecognizerWithNextPage:self withCurrentIndex:currentIndex];
             if (!state) {
@@ -187,12 +205,21 @@
                 [av release];
             }else{
 
-                [self pullTopViewToLeft:_bottomView withTopView:_topView];
+                    
+                    UIView *aTopView = [[self.view subviews] lastObject];
+                    UIView *aBottomView = nil;
+                    if(self.view.subviews.count >= 2)
+                        aBottomView = [self.view.subviews objectAtIndex:[[self.view subviews] indexOfObject:aTopView]-1];
+                    
+                    
+                    [self animationWillMoveInView:aTopView withWillShowView:aBottomView];
+
+                    
             }
         }
     }
     else if (swipeGestureRecognizer.direction == UISwipeGestureRecognizerDirectionRight) {
-        NSLog(@"Move Right");
+        NSLog(@"Move To Right");
         if([self.pageDelegate respondsToSelector:@selector(swGestureRecognizerWithPreviousPage:withCurrentIndex:)]){
             BOOL state = [self.pageDelegate swGestureRecognizerWithPreviousPage:self withCurrentIndex:currentIndex];
             if (!state) {
@@ -200,78 +227,270 @@
                 [av show];
                 [av release];
             }else{
-                if (_referenceView == _topView) {
-                    [self exchangeViewOnHierarchyForPushState];
-                    [self pushTopviewToRight:_topView withTopView:_bottomView];
-                }else if(_referenceView == _bottomView){
-                    [self exchangeViewOnHierarchyForPushState];
-                    [self pushTopviewToRight:_bottomView withTopView:_topView];
-                }else{
-                    [self pushTopviewToRight:_bottomView withTopView:_topView];
+
+                    
+                    UIView *aTopView = [[self.view subviews] lastObject];
+                    UIView *aBottomView = nil;
+                    if(self.view.subviews.count >= 2)
+                    aBottomView = [self.view.subviews objectAtIndex:[[self.view subviews] indexOfObject:aTopView]-1];
+                    
+                    
+                    [self animationWillMoveOutView:aTopView withWillShowView:aBottomView];
+                    
+                    return;
+               
                 }
-            }
         }
     }
 }
 
-- (void)handlePanContentView:(UIPanGestureRecognizer *)panGestureRecognizer{
-    
-}
 
 
 
 
-- (void)reloadNewDataOnTopView{
-    [self.topView addSubview:self.detailDescriptionLabel];
-}
 
-- (void)reloadNewDataOnBottomView{
-    [self.bottomView addSubview:self.detailDescriptionLabel];    
-}
-    
+//- (void)reloadNewDataOnUnreferenceView:(id)sender{
+//    
+//    
+//    // remove shadow on layer
+//    [[_topView layer] setShadowOpacity:0.0];
+//    [[_topView layer] setShadowRadius:0.0];
+//    [[_topView layer] setShadowColor:nil];
+//    
+//    
+//    [[_bottomView layer] setShadowOpacity:0.0];
+//    [[_bottomView layer] setShadowRadius:0.0];
+//    [[_bottomView layer] setShadowColor:nil];
+//    
+//    
+//        
+//    
+//    NSInteger topLayer = [[self.view subviews] indexOfObject:self.topView];
+//    NSInteger bottomLayer = [[self.view subviews] indexOfObject:self.bottomView];
+//    [self.view exchangeSubviewAtIndex:topLayer withSubviewAtIndex:bottomLayer];
+//    
+//    if (_referenceView == self.topView) {
+//        [self.bottomView addSubview:self.detailDescriptionLabel];
+//    }else if (_referenceView == self.bottomView){
+//        [self.topView addSubview:self.detailDescriptionLabel];
+//    }
+//
+//    CGRect newMove1 = self.bottomView.frame;
+//    CGRect newMove2 = self.topView.frame;
+//    newMove1 = newMove2 = showReferenceFrame;
+//    self.bottomView.frame = newMove1;
+//    self.bottomView.frame = newMove2;
+//    
+//}
+
 
 
 #pragma mark    -
 #pragma mark        Animation Action
-- (void)exchangeViewOnHierarchyForPushState{
-    [self.view exchangeSubviewAtIndex:0 withSubviewAtIndex:1];
-    CGRect newMove = _referenceView.frame;
-    newMove = showReferenceFrame;
-    _referenceView.frame = newMove;
-}
-
-- (void)exchangeViewOnHierarchyForPullState{
-    [self.view exchangeSubviewAtIndex:0 withSubviewAtIndex:1];
-}
+//- (void)exchangeViewOnHierarchy{
+//    
+//    NSInteger topLayer = [[self.view subviews] indexOfObject:self.topView];
+//    NSInteger bottomLayer = [[self.view subviews] indexOfObject:self.bottomView];
+//    
+//    [self.view exchangeSubviewAtIndex:topLayer withSubviewAtIndex:bottomLayer];
+//    CGRect newMove = _referenceView.frame;
+//    newMove.origin.x = _referenceView.frame.origin.x ? showReferenceFrame.origin.x : hiddenReferenceFrame.origin.x;
+//    _referenceView.frame = newMove;
+//    
+//}
 /**
  *  Top view is on screen
  **/
+//-(void)animationMoveView:(UIView*)aTopView withBottomView:(UIView*)aBottomView{
+//    
+//    [UIView beginAnimations:@"AnimationMove" context:nil];
+//    [UIView setAnimationDelegate:self];
+//    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+//    [UIView setAnimationDuration:10];
+//    if (isMoveIn) {
+//        CGRect newMove = aTopView.frame;
+//        newMove = showReferenceFrame;
+//        aTopView.frame = newMove;
+//        _referenceView = aBottomView;
+//        isMoveIn = !isMoveIn;
+//    }else if (isReveal){
+//        CGRect newMove = aTopView.frame;
+//        newMove = hiddenReferenceFrame;
+//        aTopView.frame = newMove;
+//        //_referenceView = aTopView;
+//        isReveal = !isReveal;
+//    }
+//    [UIView setAnimationDidStopSelector:@selector(reloadNewDataOnUnreferenceView:)];
+//    [UIView commitAnimations];
+//
+//}
 
-- (void)pushTopviewToRight:(UIView*)aBottomView withTopView:(UIView*)aTopView{
+
+
+-(void)animationWillMoveInView:(UIView*)currentWillHiddenView withWillShowView:(UIView*)nextWillShowView{
     
-    [UIView beginAnimations:@"ToRight" context:nil];
+    /*
+    [UIView beginAnimations:@"AnimationMoveIn" context:nil];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-    [UIView setAnimationDuration:0.5];
-    CGRect newMove = aTopView.frame;
-    newMove = hiddenReferenceFrame;
-    aTopView.frame = newMove;
-    [UIView setAnimationDidStopSelector:@selector(reloadNewDataOnBottomView)];
+    [UIView setAnimationDuration:10];
+        
+    CGRect currentRect = currentWillShowView.frame;
+    currentRect = showReferenceFrame;
+    currentWillShowView.frame = currentRect;
+
+    //Add shadow
+    currentWillShowView.layer.shadowOffset = CGSizeMake(0, 3);
+    currentWillShowView.layer.shadowColor = [UIColor blackColor].CGColor;
+    currentWillShowView.layer.shadowOpacity = 1;
+    currentWillShowView.layer.shadowRadius = 6.0;
+
+    
+    [UIView setAnimationDidStopSelector:@selector(reloadNewDataOnUnreferenceView:)];
     [UIView commitAnimations];
-    _referenceView = aTopView;
+    */
+    if (nextWillShowView == nil) {
+        return;
+    }
+    
+    CGRect startRect = nextWillShowView.frame;
+    startRect = hiddenReferenceFrame;
+    nextWillShowView.frame = startRect;
+    
+    
+    NSInteger topLayer = [[self.view subviews] indexOfObject:currentWillHiddenView];
+    NSInteger bottomLayer = [[self.view subviews] indexOfObject:nextWillShowView];
+    [self.view exchangeSubviewAtIndex:topLayer withSubviewAtIndex:bottomLayer];
+    
+    
+    [UIView animateWithDuration:1.0f delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        
+        CGRect currentRect = nextWillShowView.frame;
+        currentRect = showReferenceFrame;
+        nextWillShowView.frame = currentRect;
+        
+        //Add shadow
+        nextWillShowView.layer.shadowOffset = CGSizeMake(0, 3);
+        nextWillShowView.layer.shadowColor = [UIColor blackColor].CGColor;
+        nextWillShowView.layer.shadowOpacity = 1;
+        nextWillShowView.layer.shadowRadius = 6.0;
+        
+    } completion:^(BOOL finished) {
+        
+        // remove shadow on layer
+        [[nextWillShowView layer] setShadowOpacity:0.0];
+        [[nextWillShowView layer] setShadowRadius:0.0];
+        [[nextWillShowView layer] setShadowColor:nil];
+
+        [nextWillShowView addSubview:_detailDescriptionLabel];
+
+    }];
+    
+    
 }
 
--(void)pullTopViewToLeft:(UIView*)aBottomView withTopView:(UIView*)aTopView{
+-(void)animationWillMoveOutView:(UIView*)currentWillHiddenView withWillShowView:(UIView*)nextWillShowView{
     
-    [UIView beginAnimations:@"ToLeft" context:nil];
+    /*
+    [UIView beginAnimations:@"AnimationMoveOut" context:nil];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-    [UIView setAnimationDuration:0.5];
-    CGRect newMove = aTopView.frame;
-    newMove = showReferenceFrame;
-    aTopView.frame = newMove;
-    [UIView setAnimationDidStopSelector:@selector(reloadNewDataOnTopView)];
+    [UIView setAnimationDuration:10];
+    
+    CGRect currentRect = currentWillHiddenView.frame;
+    currentRect = hiddenReferenceFrame;
+    currentWillHiddenView.frame = currentRect;
+    
+    //Add shadow
+    currentWillHiddenView.layer.shadowOffset = CGSizeMake(0, 3);
+    currentWillHiddenView.layer.shadowColor = [UIColor blackColor].CGColor;
+    currentWillHiddenView.layer.shadowOpacity = 1;
+    currentWillHiddenView.layer.shadowRadius = 6.0;
+    
+    [UIView setAnimationDidStopSelector:@selector(reloadNewDataOnUnreferenceView:)];
+    
+    [self.view exchangeSubviewAtIndex:currentWillHiddenView withSubviewAtIndex:nextWillShowView];
+
+    CGRect finishedRect = currentWillHiddenView.frame;
+    finishedRect = showReferenceFrame;
+    currentWillHiddenView.frame = finishedRect;
+
+    
     [UIView commitAnimations];
+     */
+    
+    if (nextWillShowView == nil) {
+        return;
+    }
+    
+    CGRect startRect = currentWillHiddenView.frame;
+    startRect = showReferenceFrame;
+    currentWillHiddenView.frame = startRect;
+    
+    
+    [UIView animateWithDuration:1.0f delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        CGRect currentRect = currentWillHiddenView.frame;
+        currentRect = hiddenReferenceFrame;
+        currentWillHiddenView.frame = currentRect;
+        
+        //Add shadow
+        currentWillHiddenView.layer.shadowOffset = CGSizeMake(0, 3);
+        currentWillHiddenView.layer.shadowColor = [UIColor blackColor].CGColor;
+        currentWillHiddenView.layer.shadowOpacity = 1;
+        currentWillHiddenView.layer.shadowRadius = 6.0;
+
+    } completion:^(BOOL finished) {
+        
+        // remove shadow on layer
+        [[currentWillHiddenView layer] setShadowOpacity:0.0];
+        [[currentWillHiddenView layer] setShadowRadius:0.0];
+        [[currentWillHiddenView layer] setShadowColor:nil];
+        
+        NSInteger topLayer = [[self.view subviews] indexOfObject:currentWillHiddenView];
+        NSInteger bottomLayer = [[self.view subviews] indexOfObject:nextWillShowView];
+        [self.view exchangeSubviewAtIndex:topLayer withSubviewAtIndex:bottomLayer];
+        
+        CGRect finishedRect = currentWillHiddenView.frame;
+        finishedRect = showReferenceFrame;
+        currentWillHiddenView.frame = finishedRect;
+        
+        
+        [nextWillShowView addSubview:_detailDescriptionLabel];
+        
+    }];
+    
 }
+
+
+/*
+#pragma mark-
+#pragma mark    CATransition 
+
+-(void)animate:(id)sender{
+    
+    //Set up the animation
+    CATransition *animation = [CATransition animation];
+    animation.delegate = self;
+    animation.duration = 0.5;
+    //animation.timingFunction = UIViewAnimationCurveEaseOut;
+    if (isMoveIn) {
+        animation.type = kCATransitionMoveIn;
+        animation.subtype = kCATransitionFromLeft;
+        isMoveIn = !isMoveIn;
+    }else if (isReveal){
+        animation.type = kCATransitionReveal;
+        animation.subtype = kCATransitionFromRight;
+        isReveal = !isReveal;
+    }
+    
+    
+    NSInteger aBottomLayer = [[self.view subviews] indexOfObject:self.bottomView];
+    NSInteger aTopLayer = [[self.view subviews] indexOfObject:self.topView];
+    [self.view exchangeSubviewAtIndex:aBottomLayer withSubviewAtIndex:aTopLayer];
+    
+    
+    [[self.view layer] addAnimation:animation forKey:@"animation"];
+}
+*/
 
 @end

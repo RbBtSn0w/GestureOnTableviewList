@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "SWGestureRecognizerDelegate.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface DetailViewController : UIViewController<UISplitViewControllerDelegate>{
     id<SWGestureRecognizerDelegate> _pageDelegate;

@@ -22,6 +22,8 @@
 		803BD81516958CDE00755982 /* DetailViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 803BD81316958CDE00755982 /* DetailViewController_iPhone.xib */; };
 		803BD8701696830B00755982 /* MasterViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 803BD86F1696830B00755982 /* MasterViewController_iPad.xib */; };
 		803BD8721696832100755982 /* DetailViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 803BD8711696832100755982 /* DetailViewController_iPad.xib */; };
+		80A6E149169D0F3D00401F70 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80A6E148169D0F3D00401F70 /* QuartzCore.framework */; };
+		80B10E1E16B8D1DC003FEF77 /* StackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 80B10E1D16B8D1DC003FEF77 /* StackView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +49,9 @@
 		803BD86F1696830B00755982 /* MasterViewController_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MasterViewController_iPad.xib; sourceTree = "<group>"; };
 		803BD8711696832100755982 /* DetailViewController_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DetailViewController_iPad.xib; sourceTree = "<group>"; };
 		808CF3C6169AD337000B810B /* SWGestureRecognizerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SWGestureRecognizerDelegate.h; sourceTree = "<group>"; };
+		80A6E148169D0F3D00401F70 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		80B10E1C16B8D1DC003FEF77 /* StackView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackView.h; sourceTree = "<group>"; };
+		80B10E1D16B8D1DC003FEF77 /* StackView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StackView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				80A6E149169D0F3D00401F70 /* QuartzCore.framework in Frameworks */,
 				803BD7F316958CDE00755982 /* UIKit.framework in Frameworks */,
 				803BD7F516958CDE00755982 /* Foundation.framework in Frameworks */,
 				803BD7F716958CDE00755982 /* CoreGraphics.framework in Frameworks */,
@@ -83,6 +89,7 @@
 		803BD7F116958CDE00755982 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				80A6E148169D0F3D00401F70 /* QuartzCore.framework */,
 				803BD7F216958CDE00755982 /* UIKit.framework */,
 				803BD7F416958CDE00755982 /* Foundation.framework */,
 				803BD7F616958CDE00755982 /* CoreGraphics.framework */,
@@ -100,6 +107,8 @@
 				808CF3C6169AD337000B810B /* SWGestureRecognizerDelegate.h */,
 				803BD80D16958CDE00755982 /* DetailViewController.h */,
 				803BD80E16958CDE00755982 /* DetailViewController.m */,
+				80B10E1C16B8D1DC003FEF77 /* StackView.h */,
+				80B10E1D16B8D1DC003FEF77 /* StackView.m */,
 				803BD81016958CDE00755982 /* MasterViewController_iPhone.xib */,
 				803BD86F1696830B00755982 /* MasterViewController_iPad.xib */,
 				803BD81316958CDE00755982 /* DetailViewController_iPhone.xib */,
@@ -196,6 +205,7 @@
 				803BD80316958CDE00755982 /* AppDelegate.m in Sources */,
 				803BD80C16958CDE00755982 /* MasterViewController.m in Sources */,
 				803BD80F16958CDE00755982 /* DetailViewController.m in Sources */,
+				80B10E1E16B8D1DC003FEF77 /* StackView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
